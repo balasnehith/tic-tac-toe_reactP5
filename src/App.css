@@ -1,0 +1,195 @@
+:root{
+    --color-1: #fff;
+    --color-2: black;
+    --color-3: hsl(0, 0%, 61%);
+    --color-10: hsl(0, 0%, 41%);
+    --color-4: rgb(229, 58, 58);
+    --color-5: rgb(51, 206, 245);
+    --color-6: rgb(241, 241, 241);
+    --color-7: hsl(33, 96%, 64%);
+    --color-8: hsl(0, 1%, 65%);
+    --color-9: hsl(102, 66%, 54%);
+    --light-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+    --bright-shadow: 0px 5px 15px rgba(0,0,0,0.3);
+}
+
+*,
+::after,
+::before{
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 0px;
+}
+
+body{
+    background-color: var(--color-6);
+    min-height: 100vh;
+}
+
+h1{
+    text-align: center;
+    font-size: 3rem;
+    margin: 30px auto;
+}
+
+.mainContainer{
+    width: 450px;
+    height: 500px;
+    background-color: var(--color-1);
+    margin: auto;
+    box-shadow: var(--light-shadow);
+}
+
+.playerContainer{
+    width: 100%;
+    height: 12%;
+    background-color: var(--color-3);
+    color: var(--color-1);
+    font-size: 1.3rem;
+    display: flex;
+}
+.playerContainer .playerInner{
+    width: 50%;
+    height: 100%;
+}
+.playerInner.active{
+    border: 3px solid red;
+    background-color: var(--color-10);
+}
+.playerContainer .playerInner ol{
+    list-style: none;
+    width: 100%;
+    height: 100%; 
+}
+.playerContainer .playerInner ol li{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#playerName{
+    display: inline-block;
+    width: 84px;
+    height: 24px;
+}
+#playerInput{
+    display: inline-block;
+    width: 84px;
+    height: 24px;
+    box-sizing: border-box;
+    padding: 2px 5px;
+    border: none;
+}
+#playerInput:focus{
+    outline: none;
+    box-shadow: var(--bright-shadow);
+}
+#eleStyle{
+    display: flex;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--color-4);
+    justify-content: center;
+    align-items: center;
+    margin: 0px 10px;
+}
+#editName{
+    background-color: var(--color-2);
+    color: var(--color-1);
+    border: none;
+    font-size: 1rem;
+    border-radius: 5px;
+    padding: 5px 10px;
+    width: 60px;
+    cursor: pointer;
+}
+#editName:hover{
+    box-shadow: var(--bright-shadow);
+}
+
+.gameContainer{
+    width: 100%;
+    height: 88%;
+    background-color: var(--color-7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#startBtn{
+    position: absolute;
+    top: 5%;
+    font-size: 1.3rem;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: var(--bright-shadow);
+    cursor: pointer;
+}
+#winStatus{
+    position: absolute;
+    top: 5%;
+    font-size: 1.5rem;
+    color: var(--color-1);
+    background-color: var(--color-9);
+    padding: 5px 20px;
+    border-radius: 5px;
+}
+#startBtn:hover{
+    background-color: var(--color-9);
+    color: var(--color-1);
+}
+#startBtn:active{
+    scale: 0.98;
+}
+
+.gameContainer .gameBoard{
+    width: 300px;
+    height: 300px;
+    display: grid;
+    grid-template-columns: 80px 80px 80px;
+    grid-template-rows: 80px 80px 80px;
+    gap: 10px;
+    justify-content: center;
+    align-content: center;
+}
+.gameBoard.blur{
+    filter: blur(8px);
+}
+.gameBoard button{
+    font-size: 2rem;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--color-1);
+    color: var(--color-2);
+    cursor: pointer;
+}
+.gameBoard button:focus{
+    outline: none;
+}
+.gameBoard button:hover{
+    box-shadow: var(--bright-shadow);
+}
+.gameBoard button:disabled{
+    opacity: 1;
+    cursor: auto;
+    box-shadow: none;
+}
+
+#newGame{
+    position: absolute;
+    bottom: 10px;
+    font-size: 1.3rem;
+    background-color: var(--color-4);
+    color: var(--color-1);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+#newGame:hover{
+    box-shadow: var(--bright-shadow);
+}
