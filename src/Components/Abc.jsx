@@ -1,49 +1,55 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function Abc({ name, symbol, setName, turn, start }) {
+export default function Abc({
+  initialName,
+  symbol,
+  isActive,
+  updatePlayerDetails,
+}) {
+  const [playersName, setPlayersName] = useState(initialName);
   const [isEditing, setIsEditing] = useState(false);
-  const inputRef = useRef(null);
-  const activePlayer = useRef(null);
-
-  useEffect(()=>{
-    if(turn===name){
-      activePlayer.current.classList.add('active');
-    }else{
-      activePlayer.current.classList.remove('active');
+  const inputNameRef = useRef(null);
+  useEffect(() => {
+    if (isEditing) {
+      inputNameRef.current.focus();
     }
-  })
+  }, [isEditing]);
 
-  function handleEditSave() {
+  function handleEditName() {
+    if (isEditing) {
+      updatePlayerDetails(symbol, playersName);
+    }
     setIsEditing((p) => !p);
   }
-  function inputOnChange(event){
-    setName(event.target.value)
-  }
-  function handleKeyDown(event){
-    if(event.key==='Enter'){
-      handleEditSave();
-    }
+
+  function handleNameChange(event) {
+    setPlayersName((p) => event.target.value);
   }
 
-  useEffect(()=>{
-    if(isEditing){
-      inputRef.current.focus();
-      inputRef.current.select();
+  function handleEnterKey(event) {
+    if (event.key === "Enter") {
+      handleEditName();
     }
-  },[isEditing])
+  }
 
   return (
-    <div className="playerInner" ref={activePlayer}>
+    <div className={`playerInner ${isActive ? "active" : ""}`}>
       <ol>
         <li>
           {isEditing && (
-            <input ref={inputRef} onChange={inputOnChange} onKeyDown={handleKeyDown} value={name} id="playerInput"/>
+            <input
+              id="playerInput"
+              value={playersName}
+              onChange={handleNameChange}
+              ref={inputNameRef}
+              onKeyDown={handleEnterKey}
+            />
           )}
-          {!isEditing && <span id="playerName">{name}</span>}
+          {!isEditing && <span id="playerName">{playersName}</span>}
           <span id="eleStyle">{symbol}</span>
-          {!start&&<button id="editName" onClick={handleEditSave}>
+          <button id="editName" onClick={handleEditName}>
             {isEditing ? "Save" : "Edit"}
-          </button>}
+          </button>
         </li>
       </ol>
     </div>

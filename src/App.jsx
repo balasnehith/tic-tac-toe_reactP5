@@ -1,72 +1,112 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import Abc from "./Components/Abc";
 import GameBoard from "./Components/GameBoard";
 
+const InitialGameBoard = [null, null, null, null, null, null, null, null, null];
+const PLAYERS = { X: "Player-1", O: "Player-2" };
+const winPatterns = [
+  [0, 1, 2],
+  [0, 3, 6],
+  [0, 4, 8],
+  [1, 4, 7],
+  [2, 5, 8],
+  [2, 4, 6],
+  [3, 4, 5],
+  [6, 7, 8],
+];
+
+function deriveWinner(gameData, playersData) {
+  let winner;
+  for (const combinations of winPatterns) {
+    const firstEle = gameData[combinations[0]];
+    const secondEle = gameData[combinations[1]];
+    const thirdEle = gameData[combinations[2]];
+    if (firstEle && firstEle === secondEle && firstEle === thirdEle) {
+      winner = playersData[firstEle];
+    }
+  }
+  return winner;
+}
+
+function playerTurn(data) {
+  let currentTurn = "X";
+  if (data.length > 0 && data[0].player === "X") {
+    currentTurn = "O";
+  }
+  return currentTurn;
+}
+
+function deriveGameBoard(data) {
+  let updateBoard = [...InitialGameBoard];
+
+  for (const ele of data) {
+    const { indexPosition, player } = ele;
+    updateBoard[indexPosition] = player;
+  }
+  return updateBoard;
+}
+
 function App() {
-  const [start, setStart] = useState(false);
-  const [player_1_name, setplayer_1_name] = useState("Player-1");
-  const [player_2_name, setplayer_2_name] = useState("Player-2");
-  const [playerTurn, setPlayerTurn] = useState();
-  const [playerWonStatus, setPlayerWonStatus] = useState(null);
-  const player_1_symbol = useRef("X");
-  const player_2_symbol = useRef("O");
-  const [resultMessage, setResultMessage] = useState('');
+  const [gameData, setGameData] = useState([]);
+  const [playerDetails, setPlayerDetails] = useState(PLAYERS);
 
-  useEffect(() => {
-    if(start) setPlayerTurn(player_1_name)
-  }, [start]);
+  const activePlayer = playerTurn(gameData);
+  const gameBoard = deriveGameBoard(gameData);
+  const winner = deriveWinner(gameBoard, playerDetails);
+  const draw = !winner && gameData.length === 9;
+  // console.log(winner)
 
-  useEffect(()=>{
-    if(playerWonStatus===player_1_name) setResultMessage(`${player_1_name} has Won!...`);
-    else if(playerWonStatus===player_2_name) setResultMessage(`${player_2_name} has Won!...`);
-    else if(playerWonStatus==='Draw') setResultMessage(`It's a Draw!...`);
-  },[playerWonStatus])
+  function handleGameBtnClick(ind) {
+    setGameData((p) => {
+      const currentPlayer = playerTurn(p);
+      const updateData = [{ indexPosition: ind, player: currentPlayer }, ...p];
+      return updateData;
+    });
+  }
+  function updatePlayerDetails(symbol, newName) {
+    setPlayerDetails((p) => {
+      return {
+        ...p,
+        [symbol]: newName,
+      };
+    });
+  }
+  function handleNewGame() {
+    setGameData([]);
+  }
   return (
     <>
       <h1>Tic-Tac-Toe</h1>
       <div className="mainContainer">
         <div className="playerContainer">
           <Abc
-            name={player_1_name}
-            setName={setplayer_1_name}
-            symbol={player_1_symbol.current}
-            turn={playerTurn}
-            start={start}
+            initialName={PLAYERS.X}
+            symbol="X"
+            isActive={activePlayer === "X" && !winner && !draw}
+            updatePlayerDetails={updatePlayerDetails}
           />
           <Abc
-            name={player_2_name}
-            setName={setplayer_2_name}
-            symbol={player_2_symbol.current}
-            turn={playerTurn}
-            start={start}
+            initialName={PLAYERS.O}
+            symbol="O"
+            isActive={activePlayer === "O" && !winner && !draw}
+            updatePlayerDetails={updatePlayerDetails}
           />
         </div>
         <div className="gameContainer">
-          {!start && (
-            <button id="startBtn" onClick={() => {setStart(true)}}>
-              Start
-            </button>
-          )}
-          {playerWonStatus&&<p id="winStatus">{resultMessage}</p>}
+          {winner && <p id="winStatus">{winner} won!...</p>}
+          {draw && <p id="winStatus">It's a Draw!...</p>}
           <GameBoard
-            playerSymbol={
-              playerTurn === player_1_name
-                ? player_1_symbol.current
-                : player_2_symbol.current
-            }
-            playerTurn={playerTurn}
-            setTurn={setPlayerTurn}
-            player_1_name={player_1_name}
-            player_2_name={player_2_name}
-            start={start}
-            setplayerWonStatus={setPlayerWonStatus}
+            board={gameBoard}
+            handleGameBtnClick={handleGameBtnClick}
+            gameOver={winner}
           />
-          {start&&<button id="newGame" onClick={()=>{
-            setStart(false);
-            setPlayerTurn();
-            setPlayerWonStatus(null)
-          }}>New Game</button>}
+          <button
+            onClick={handleNewGame}
+            className={`newGame ${winner || draw ? "active" : ""}`}
+          >
+            New Game
+          </button>
         </div>
       </div>
     </>
