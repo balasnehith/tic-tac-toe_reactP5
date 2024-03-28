@@ -18,15 +18,17 @@ const winPatterns = [
 
 function deriveWinner(gameData, playersData) {
   let winner;
+  let winPositions;
   for (const combinations of winPatterns) {
     const firstEle = gameData[combinations[0]];
     const secondEle = gameData[combinations[1]];
     const thirdEle = gameData[combinations[2]];
     if (firstEle && firstEle === secondEle && firstEle === thirdEle) {
       winner = playersData[firstEle];
+      winPositions = [...combinations];
     }
   }
-  return winner;
+  return [winner, winPositions];
 }
 
 function playerTurn(data) {
@@ -54,7 +56,7 @@ function App() {
   const activePlayer = playerTurn(gameData);
   const gameBoard = deriveGameBoard(gameData);
   const winner = deriveWinner(gameBoard, playerDetails);
-  const draw = !winner && gameData.length === 9;
+  const draw = !winner[0] && gameData.length === 9;
   // console.log(winner)
 
   function handleGameBtnClick(ind) {
@@ -64,6 +66,7 @@ function App() {
       return updateData;
     });
   }
+
   function updatePlayerDetails(symbol, newName) {
     setPlayerDetails((p) => {
       return {
@@ -72,9 +75,11 @@ function App() {
       };
     });
   }
+
   function handleNewGame() {
     setGameData([]);
   }
+
   return (
     <>
       <h1>Tic-Tac-Toe</h1>
@@ -83,27 +88,28 @@ function App() {
           <Abc
             initialName={PLAYERS.X}
             symbol="X"
-            isActive={activePlayer === "X" && !winner && !draw}
+            isActive={activePlayer === "X" && !winner[0] && !draw}
             updatePlayerDetails={updatePlayerDetails}
           />
           <Abc
             initialName={PLAYERS.O}
             symbol="O"
-            isActive={activePlayer === "O" && !winner && !draw}
+            isActive={activePlayer === "O" && !winner[0] && !draw}
             updatePlayerDetails={updatePlayerDetails}
           />
         </div>
         <div className="gameContainer">
-          {winner && <p id="winStatus">{winner} won!...</p>}
+          {winner[0] && <p id="winStatus">{winner[0]} won!...</p>}
           {draw && <p id="winStatus">It's a Draw!...</p>}
           <GameBoard
             board={gameBoard}
             handleGameBtnClick={handleGameBtnClick}
             gameOver={winner}
+
           />
           <button
             onClick={handleNewGame}
-            className={`newGame ${winner || draw ? "active" : ""}`}
+            className={`newGame ${winner[0] || draw ? "active" : ""}`}
           >
             New Game
           </button>
